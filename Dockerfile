@@ -112,6 +112,27 @@ RUN git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git && \
 
 # Build GStreamer core  
 
+#YOLOv8_DeepSORT_TRACKING.ipynb
+# RUN git clone git clone https://github.com/Gayathri-Selvaganapathi/vehicle_tracking_counting.git && \
+#     cd vehicle_tracking_counting && \
+#     pip install -r requirements.txt && \
+#     pip install -e .
+RUN git clone https://github.com/MuhammadMoinFaisal/YOLOv8-DeepSORT-Object-Tracking.git && \
+    cd YOLOv8-DeepSORT-Object-Tracking && \
+    pip install -e '.[dev]'
+
+#FRON gdown "https://drive.google.com/uc?id=11ZSZcG-bcbueXZC3rN08CM0qqX3eiHxf&confirm=t"
+WORKDIR /root/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect
+COPY deep_sort_pytorch.zip .
+RUN unzip deep_sort_pytorch.zip && \
+    rm deep_sort_pytorch.zip 
+
+COPY patch_deep_sort_pytorch.patch .
+RUN patch -p1 < patch_deep_sort_pytorch.patch && \
+    rm patch_deep_sort_pytorch.patch
+
+
+
 
 
 # Copy application
