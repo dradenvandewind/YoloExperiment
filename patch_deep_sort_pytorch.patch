@@ -1,0 +1,26 @@
+diff -ruN '--exclude=*.pyc' unzipdir/deep_sort_pytorch/deep_sort/deep_sort.py deep_sort_pytorch/deep_sort/deep_sort.py
+--- unzipdir/deep_sort_pytorch/deep_sort/deep_sort.py	2021-08-24 12:47:12.000000000 +0200
++++ deep_sort_pytorch/deep_sort/deep_sort.py	2025-06-05 17:14:29.880000000 +0200
+@@ -47,7 +47,8 @@
+             x1, y1, x2, y2 = self._tlwh_to_xyxy(box)
+             track_id = track.track_id
+             track_oid = track.oid
+-            outputs.append(np.array([x1, y1, x2, y2, track_id, track_oid], dtype=np.int))
++            #outputs.append(np.array([x1, y1, x2, y2, track_id, track_oid], dtype=np.int))
++            outputs.append(np.array([x1, y1, x2, y2, track_id, track_oid], dtype=np.int64))
+         if len(outputs) > 0:
+             outputs = np.stack(outputs, axis=0)
+         return outputs
+diff -ruN '--exclude=*.pyc' unzipdir/deep_sort_pytorch/deep_sort/sort/detection.py deep_sort_pytorch/deep_sort/sort/detection.py
+--- unzipdir/deep_sort_pytorch/deep_sort/sort/detection.py	2021-08-24 12:47:12.000000000 +0200
++++ deep_sort_pytorch/deep_sort/sort/detection.py	2025-06-05 17:07:13.320000000 +0200
+@@ -27,7 +27,8 @@
+     """
+ 
+     def __init__(self, tlwh, confidence, feature, oid):
+-        self.tlwh = np.asarray(tlwh, dtype=np.float)
++        #self.tlwh = np.asarray(tlwh, dtype=np.float)
++        self.tlwh = np.asarray(tlwh, dtype=np.float64)
+         self.confidence = float(confidence)
+         self.feature = np.asarray(feature, dtype=np.float32)
+         self.oid = oid
