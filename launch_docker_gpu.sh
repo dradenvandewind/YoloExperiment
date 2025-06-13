@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# Script de lancement Docker CUDA + GStreamer
+# Docker launch script CUDA + GStreamer
 # Usage: ./launch_docker.sh
 
 set -e
 
-echo "=== Configuration Docker CUDA + GStreamer ==="
+echo "=== Docker CUDA + GStreamer configuration ==="
 
 # Vérifier si nvidia-smi fonctionne
 if ! command -v nvidia-smi &> /dev/null; then
-    echo "❌ NVIDIA drivers non détectés. Installer d'abord les drivers NVIDIA."
+    echo "❌ NVIDIA drivers not detected. Install NVIDIA drivers first.."
     exit 1
 fi
 
-echo "✅ NVIDIA drivers détectés:"
+echo "✅ Detected NVIDIA drivers:"
 nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
 
 # Vérifier Docker
@@ -24,16 +24,16 @@ fi
 
 # Vérifier nvidia-container-toolkit
 if ! docker run --rm --gpus all nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04 nvidia-smi &> /dev/null; then
-    echo "❌ NVIDIA Container Toolkit non configuré."
-    echo "Installer avec:"
+    echo "❌ NVIDIA Container Toolkit not configured."
+    echo "Install with:"
     echo "sudo apt-get install -y nvidia-container-toolkit"
     echo "sudo systemctl restart docker"
     exit 1
 fi
 
-echo "✅ NVIDIA Container Toolkit configuré"
+echo "✅ NVIDIA Container Toolkit configured"
 
-# Autoriser X11 (pour l'affichage)
+# Enable X11 (for display)
 xhost +local:docker
 
 # Variables
@@ -41,22 +41,23 @@ IMAGE_NAME="yolovo8gst:latest"
 #"cuda-gstreamer:latest"
 CONTAINER_NAME="cuda-gstreamer-dev"
 
-# Construire l'image si elle n'existe pas
+#Build the image if it doesn't exist
 if [[ "$(docker images -q $IMAGE_NAME 2> /dev/null)" == "" ]]; then
-    echo "🔨 Construction de l'image Docker..."
+    echo "🔨 Building the Docker image..."
     docker build -t $IMAGE_NAME .
 fi
 
-# Arrêter le container s'il existe déjà
+# Stop the container if it already exists
 if docker ps -a --format 'table {{.Names}}' | grep -q $CONTAINER_NAME; then
-    echo "🛑 Arrêt du container existant..."
+    echo "🛑 Stopping the existing container..."
     docker stop $CONTAINER_NAME 2>/dev/null || true
     docker rm $CONTAINER_NAME 2>/dev/null || true
 fi
 
-echo "🚀 Lancement du container..."
+echo "🚀 Container launch..."
 
-# Lancer le container
+# Launch the container
+
 docker run -it --rm \
     --name $CONTAINER_NAME \
     --gpus all \
@@ -86,7 +87,7 @@ docker run -it --rm \
         exec bash
     "
 
-# Nettoyer X11
+# Clean X11
 xhost -local:docker
 
-echo "✨ Container fermé"
+echo "✨ Closed container"
